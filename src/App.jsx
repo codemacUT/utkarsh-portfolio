@@ -178,7 +178,7 @@ const NavLink = ({ href, label, onClick, active }) => (
       document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
       if (onClick) onClick();
     }}
-    className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+    className={`relative px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${
       active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:text-white hover:bg-slate-800'
     }`}
   >
@@ -521,9 +521,9 @@ export default function Portfolio() {
       </div>
 
       {/* --- FLOATING NAVIGATION --- */}
-      <div className="fixed top-6 left-0 w-full z-50 flex justify-center px-4">
+      <div className="fixed top-3 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
         {/* High opacity and border for contrast */}
-        <nav className={`flex items-center gap-1 p-1.5 rounded-full transition-all duration-500 border ${scrolled ? 'bg-slate-950/90 backdrop-blur-md shadow-2xl border-slate-800 scale-100' : 'bg-transparent border-transparent scale-105'}`}>
+        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/90 backdrop-blur-md shadow-2xl border-slate-800 scale-100' : 'bg-transparent border-transparent scale-105'}`}>
           {['About', 'Skills', 'Projects', 'Education'].map((item) => (
             <NavLink 
               key={item} 
@@ -532,14 +532,14 @@ export default function Portfolio() {
               active={activeSection === item.toLowerCase()}
             />
           ))}
-          <div className="w-px h-4 bg-slate-700 mx-2"></div>
+          <div className="w-px h-3 sm:h-4 bg-slate-700 mx-1 sm:mx-2 flex-shrink-0"></div>
           <a 
             href="#contact" 
             onClick={(e) => {
               e.preventDefault();
               document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-white text-sm font-bold rounded-full transition-all cursor-pointer shadow-lg shadow-green-900/30 hover:shadow-green-900/50"
+            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-white text-xs sm:text-sm font-bold rounded-full transition-all cursor-pointer shadow-lg shadow-green-900/30 hover:shadow-green-900/50 whitespace-nowrap flex-shrink-0"
           >
             Hire Me
           </a>
