@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Github, 
-  Linkedin, 
-  Mail, 
-  ExternalLink, 
-  Code, 
-  Briefcase, 
-  User, 
-  FileText, 
-  Menu, 
-  X, 
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ExternalLink,
+  Code,
+  Briefcase,
+  User,
+  FileText,
+  Menu,
+  X,
   ChevronRight,
   Cpu,
   Globe,
@@ -36,7 +36,7 @@ const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 // Debug: Check if API key is loaded
 if (import.meta.env.DEV) {
   console.log("🔑 API Key Status:", apiKey ? "✅ Loaded" : "❌ Missing - Running in demo mode");
-} 
+}
 
 // --- USER DATA CONFIGURATION ---
 const PERSONAL_INFO = {
@@ -49,7 +49,7 @@ const PERSONAL_INFO = {
   linkedin: "https://www.linkedin.com/in/utkarsh-tiwari-491846274/",
   resumeLink: "https://drive.google.com/file/d/1303xZx9BDQwpLqVpOZnWx4NofRpbObKt/view?usp=sharing",
   phone: "+91-8299502048",
-  profileImage: "profile.jpg", 
+  profileImage: "profile.jpg",
 };
 
 const SKILLS = [
@@ -67,7 +67,7 @@ const PROJECTS = [
     description: "QR-based attendance system reducing class roll-call time by 80%. Features a PostgreSQL backend on Render with Firebase Auth for zero data loss.",
     tags: ["Flutter", "Firebase", "PostgreSQL"],
     github: "https://github.com/codemacUT/smart-attendee-app",
-    demo: null, 
+    demo: null,
     image: "https://placehold.co/600x400/1e293b/cbd5e1?text=Smart+Attendee+App"
   },
   {
@@ -82,7 +82,7 @@ const PROJECTS = [
     title: "Automation Workflow System",
     description: "Modular automation pipelines designed for API calls, parsing, and backend tasks. Optimized data flow between services to reduce latency.",
     tags: ["n8n", "REST APIs", "Automation"],
-    github: null, 
+    github: null,
     demo: null,
     image: "https://placehold.co/600x400/1e293b/cbd5e1?text=Automation+System"
   }
@@ -109,52 +109,52 @@ const EDUCATION = [
 async function callGeminiAPI(prompt, systemInstruction, isJson = false) {
   if (!apiKey) {
     console.warn("API Key missing. Returning demo data.");
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     if (isJson) {
-        return {
-            title: "Smart Eco-Tracker (Demo)",
-            description: "A Flutter app that uses AI to classify waste from photos and tracks carbon footprint via n8n.",
-            tags: ["Flutter", "AI", "n8n"]
-        };
+      return {
+        title: "Smart Eco-Tracker (Demo)",
+        description: "A Flutter app that uses AI to classify waste from photos and tracks carbon footprint via n8n.",
+        tags: ["Flutter", "AI", "n8n"]
+      };
     }
     return "I'm currently running in demo mode. Utkarsh is a skilled developer specializing in Flutter, n8n automation, and backend integration!";
   }
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
   const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: systemInstruction }] } };
-  
+
   if (isJson) {
-    payload.generationConfig = { 
-      responseMimeType: "application/json", 
-      responseSchema: { 
-        type: "OBJECT", 
-        properties: { 
-          title: { type: "STRING" }, 
-          description: { type: "STRING" }, 
-          tags: { type: "ARRAY", items: { type: "STRING" } } 
-        } 
-      } 
+    payload.generationConfig = {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "OBJECT",
+        properties: {
+          title: { type: "STRING" },
+          description: { type: "STRING" },
+          tags: { type: "ARRAY", items: { type: "STRING" } }
+        }
+      }
     };
   }
 
   for (let i = 0; i < 3; i++) {
     try {
       const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      
+
       if (!response.ok) {
-         throw new Error(`HTTP Error: ${response.status}`);
+        throw new Error(`HTTP Error: ${response.status}`);
       }
 
       const data = await response.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) throw new Error("No content");
-      
+
       if (isJson) return JSON.parse(text.replace(/```json|```/g, '').trim());
       return text;
-    } catch (e) { 
-      if (i === 2) throw e; 
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
+    } catch (e) {
+      if (i === 2) throw e;
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
 }
@@ -171,16 +171,15 @@ const SectionTitle = ({ children, id, subtitle }) => (
 );
 
 const NavLink = ({ href, label, onClick, active }) => (
-  <a 
-    href={href} 
+  <a
+    href={href}
     onClick={(e) => {
       e.preventDefault();
       document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
       if (onClick) onClick();
     }}
-    className={`relative px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${
-      active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:text-white hover:bg-slate-800'
-    }`}
+    className={`relative px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+      }`}
   >
     {label}
   </a>
@@ -189,17 +188,17 @@ const NavLink = ({ href, label, onClick, active }) => (
 const ProjectCard = ({ project }) => (
   <div className="group relative bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 shadow-lg hover:shadow-green-900/20 hover:border-green-500/30 transition-all duration-500 hover:-translate-y-2">
     <div className="aspect-video overflow-hidden bg-slate-800 relative">
-      <img 
-        src={project.image} 
-        alt={project.title} 
+      <img
+        src={project.image}
+        alt={project.title}
         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex items-end justify-between p-6">
         <div className="flex gap-3">
           {project.github && (
-            <a 
-              href={project.github} 
-              target="_blank" 
+            <a
+              href={project.github}
+              target="_blank"
               rel="noopener noreferrer"
               className="p-2 bg-white text-slate-900 rounded-full hover:bg-slate-200 transition-colors shadow-lg"
               title="View Code"
@@ -208,9 +207,9 @@ const ProjectCard = ({ project }) => (
             </a>
           )}
           {project.demo && (
-            <a 
-              href={project.demo} 
-              target="_blank" 
+            <a
+              href={project.demo}
+              target="_blank"
               rel="noopener noreferrer"
               className="p-2 bg-white/10 backdrop-blur-md text-white rounded-full hover:bg-blue-600 transition-colors border border-white/10"
               title="Live Demo"
@@ -239,7 +238,7 @@ const EducationCard = ({ education, isLatest }) => (
   <div className="relative pl-8 md:pl-0">
     {/* Mobile Line */}
     <div className="md:hidden absolute left-2 top-2 bottom-0 w-0.5 bg-slate-800"></div>
-    
+
     <div className="md:flex items-center justify-between group">
       <div className="hidden md:block w-1/2 pr-12 text-right">
         <span className={`text-sm font-bold tracking-widest uppercase ${isLatest ? 'text-green-400' : 'text-slate-500'}`}>
@@ -247,21 +246,21 @@ const EducationCard = ({ education, isLatest }) => (
         </span>
         <h3 className="text-xl font-bold text-white mt-1">{education.institution}</h3>
       </div>
-      
+
       {/* Timeline Dot */}
       <div className={`absolute left-0 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full border-4 z-10 transition-all duration-300 
-        ${isLatest 
-          ? 'bg-green-500 border-green-900 shadow-[0_0_0_4px_rgba(34,197,94,0.2)]' 
+        ${isLatest
+          ? 'bg-green-500 border-green-900 shadow-[0_0_0_4px_rgba(34,197,94,0.2)]'
           : 'bg-slate-900 border-slate-700 shadow-[0_0_0_4px_rgba(30,41,59,0.5)]'
         }`}>
-          {isLatest && <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></div>}
+        {isLatest && <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></div>}
       </div>
-      
+
       <div className="md:w-1/2 md:pl-12 pb-16">
         <div className="md:hidden mb-2">
-           <span className={`text-xs font-bold px-2 py-1 rounded ${isLatest ? 'text-green-300 bg-green-900/30 border border-green-800' : 'text-slate-400 bg-slate-800 border border-slate-700'}`}>
-             {education.period}
-           </span>
+          <span className={`text-xs font-bold px-2 py-1 rounded ${isLatest ? 'text-green-300 bg-green-900/30 border border-green-800' : 'text-slate-400 bg-slate-800 border border-slate-700'}`}>
+            {education.period}
+          </span>
         </div>
         <h4 className="text-lg font-bold text-slate-200 md:mb-1 group-hover:text-blue-400 transition-colors">{education.degree}</h4>
         <h5 className="text-md text-slate-500 md:hidden mb-2">{education.institution}</h5>
@@ -298,12 +297,12 @@ const ChatInterface = () => {
       parts.push(<strong key={key++} className="font-semibold">{match[1]}</strong>);
       lastIndex = match.index + match[0].length;
     }
-    
+
     // Add remaining text
     if (lastIndex < text.length) {
       parts.push(<span key={key++}>{text.substring(lastIndex)}</span>);
     }
-    
+
     return parts.length > 0 ? parts : [<span key={0}>{text}</span>];
   };
 
@@ -311,31 +310,31 @@ const ChatInterface = () => {
   const renderMessage = (text) => {
     // Split by newlines first to handle line breaks
     const lines = text.split('\n');
-    
+
     return lines.map((line, lineIdx) => {
       // Skip empty lines
       if (!line.trim() && lineIdx < lines.length - 1) {
         return <br key={lineIdx} />;
       }
-      
+
       // Handle markdown-style bullet points
       const bulletMatch = line.match(/^\s*[\*\-\•]\s*(.+)/);
       if (bulletMatch) {
         const content = bulletMatch[1];
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         const parts = content.split(urlRegex);
-        
+
         return (
           <div key={lineIdx} className="mb-1.5">
             <span className="mr-2">•</span>
             {parts.map((part, partIdx) => {
               if (part.match(urlRegex)) {
                 return (
-                  <a 
-                    key={partIdx} 
-                    href={part} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    key={partIdx}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-blue-400 underline break-all hover:text-blue-300"
                   >
                     {part}
@@ -347,19 +346,19 @@ const ChatInterface = () => {
           </div>
         );
       }
-      
+
       // Regular line with potential URLs
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       const parts = line.split(urlRegex);
-      
+
       const lineContent = parts.map((part, partIdx) => {
         if (part.match(urlRegex)) {
           return (
-            <a 
-              key={partIdx} 
-              href={part} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              key={partIdx}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-blue-400 underline break-all hover:text-blue-300 block mb-1"
             >
               {part}
@@ -368,7 +367,7 @@ const ChatInterface = () => {
         }
         return <span key={partIdx}>{parseMarkdownBold(part)}</span>;
       });
-      
+
       return (
         <div key={lineIdx} className={lineIdx < lines.length - 1 ? 'mb-2' : ''}>
           {lineContent}
@@ -383,7 +382,7 @@ const ChatInterface = () => {
     setMessages(p => [...p, { role: 'user', text: msg }]);
     try {
       const context = JSON.stringify({ PERSONAL_INFO, SKILLS, PROJECTS, EDUCATION });
-      
+
       const systemPrompt = `
         You are a professional portfolio assistant for ${PERSONAL_INFO.name}.
         Use this data to answer: ${context}.
@@ -402,6 +401,8 @@ const ChatInterface = () => {
         If listing projects, format like this:
         * Smart Attendee App: https://github.com/username/project
         * AI-Integrated Telegram Bot: https://github.com/username/another
+        * LinkedIn: https://www.linkedin.com/in/utkarsh-tiwari-491846274/
+        * GitHub: https://github.com/codemacUT
         
         NOT like this:
         * **Smart Attendee App:** https://github.com/username/project
@@ -410,8 +411,8 @@ const ChatInterface = () => {
 
       const reply = await callGeminiAPI(msg, systemPrompt);
       setMessages(p => [...p, { role: 'assistant', text: reply }]);
-    } catch { 
-      setMessages(p => [...p, { role: 'assistant', text: "Connection error. Please check your API Key." }]); 
+    } catch {
+      setMessages(p => [...p, { role: 'assistant', text: "Connection error. Please check your API Key." }]);
     }
     setLoading(false);
   };
@@ -452,40 +453,164 @@ const IdeaGenerator = () => {
   const [idea, setIdea] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Fallback Data Pool (Varied Skill Combinations)
+  const MOCK_IDEAS = [
+    {
+      title: "Smart Lens AI",
+      tagline: "Point-and-shoot object identifier using Gemini Vision.",
+      features: ["Flutter camera integration", "Gemini Multimodal API", "Instant object analysis"],
+      tags: ["Flutter", "Gemini API", "Dart"],
+      difficulty: "Intermediate"
+    },
+    {
+      title: "Auto-CRM Sync",
+      tagline: "Self-hosting CRM automation system without coding.",
+      features: ["n8n webhook triggers", "PostgreSQL data storage", "Automated email workflows"],
+      tags: ["n8n", "PostgreSQL", "Automation"],
+      difficulty: "Advanced"
+    },
+    {
+      title: "High-Freq Trading Sim",
+      tagline: "Low-latency trading engine simulator.",
+      features: ["C++ optimized matching engine", "O(1) order book lookups", "Real-time performance metrics"],
+      tags: ["C++", "DSA", "System Design"],
+      difficulty: "Advanced"
+    }
+  ];
+
   const generate = async () => {
+    setIdea(null);
     setLoading(true);
     const skills = SKILLS.map(s => s.name).join(', ');
-    const prompt = `Generate 1 realistic project idea using ${skills}. Output JSON: {title, description (max 15 words), tags}. NO Markdown.`;
+
+    // Few-Shot Prompting for JSON Structure
+    const prompt = `
+    Role: Senior Tech Architect.
+    Task: Generate 1 impressive project idea using a creative combination of 2-3 of these skills: ${skills}.
+    
+    Example Output JSON:
+    {
+      "title": "NebulaStream",
+      "tagline": "Real-time distributed data processing engine.",
+      "features": ["Low-latency event processing", "Fault-tolerant architecture", "Visual data pipeline builder"],
+      "tags": ["Flutter", "Gemini API"],
+      "difficulty": "Advanced"
+    }
+    
+    Generate for: ${skills}`;
+
+    const systemInstruction = `You are a Senior Technical Architect.
+    CRITICAL: Output ONLY valid JSON.
+    Constraints:
+    - Title: Max 5 words.
+    - Tagline: Max 15 words.
+    - Features: Exactly 3 short bullet points.
+    - Difficulty: Beginner, Intermediate, or Advanced.
+    - Tech Stack: Pick 2-3 relevant skills from input.`;
+
     try {
-      const res = await callGeminiAPI("Idea", prompt, true);
-      setIdea(res);
-    } catch (e) { console.error(e); }
+      let res = await callGeminiAPI(prompt, systemInstruction, true);
+
+      // STRICT VALIDATION: Fail if any key field is missing or empty
+      if (!res || typeof res !== 'object' || !res.title || !res.tagline || !Array.isArray(res.features)) {
+        throw new Error("Incomplete JSON");
+      }
+
+      const safeRes = {
+        title: res.title.substring(0, 60), // Relaxed limit
+        tagline: res.tagline.substring(0, 120), // Relaxed limit
+        features: res.features.slice(0, 3).map(f => f.substring(0, 80)),
+        tags: Array.isArray(res.tags) ? res.tags.slice(0, 4) : ["React", "Node.js"],
+        difficulty: ["Beginner", "Intermediate", "Advanced"].includes(res.difficulty) ? res.difficulty : "Intermediate"
+      };
+
+      setIdea(safeRes);
+    } catch (e) {
+      console.error("Generation failed, using fallback:", e);
+      // Random Fallback
+      const randomIdea = MOCK_IDEAS[Math.floor(Math.random() * MOCK_IDEAS.length)];
+      setIdea(randomIdea);
+    }
     setLoading(false);
   };
 
   return (
-    <div className="mt-20 relative rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-10 text-center text-white overflow-hidden shadow-2xl border border-slate-700/50">
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-      <div className="relative z-10 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/10 text-blue-300">
-          <Sparkles size={14} className="text-yellow-400" /> AI Powered
+    <div className="mt-20 relative rounded-[2.5rem] bg-slate-900 border border-slate-800 p-8 md:p-12 overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-900/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+      <div className="relative z-10 max-w-3xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 border border-slate-700 text-blue-300 text-sm font-semibold mb-6">
+          <Sparkles size={16} className="text-yellow-400" />
+          <span>AI Project Architect</span>
         </div>
-        <h3 className="text-3xl font-bold mb-4 text-white">Curious what I can build?</h3>
-        <p className="text-slate-400 mb-8">Let my AI assistant brainstorm a project concept based on my exact tech stack.</p>
-        
+
+        <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Stuck on what to build next?</h3>
+        <p className="text-slate-400 mb-10 text-lg">Generate a portfolio-worthy project idea tailored to your exact skill set.</p>
+
         {!idea ? (
-          <button onClick={generate} disabled={loading} className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all disabled:opacity-70 flex items-center gap-2 mx-auto shadow-lg shadow-blue-900/20">
-            {loading ? <Loader2 className="animate-spin" /> : <Cpu />} 
-            {loading ? "Analyzing Stack..." : "Generate Concept"}
+          <button
+            onClick={generate}
+            disabled={loading}
+            className="group relative px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-blue-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-xl shadow-blue-900/20 hover:shadow-blue-900/40 hover:-translate-y-1"
+          >
+            <span className="flex items-center gap-3">
+              {loading ? <Loader2 className="animate-spin" /> : <Cpu />}
+              {loading ? "Architecting Solution..." : "Generate Project Concept"}
+            </span>
           </button>
         ) : (
-          <div className="bg-slate-950/50 backdrop-blur-md border border-slate-700 rounded-2xl p-6 text-left animate-in zoom-in duration-300">
-            <h4 className="text-xl font-bold mb-2 text-white">{idea.title}</h4>
-            <p className="text-slate-300 text-sm mb-4">{idea.description}</p>
-            <div className="flex gap-2 mb-4 flex-wrap">
-              {idea.tags?.map(t => <span key={t} className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-blue-200">{t}</span>)}
+          <div className="bg-slate-950/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 text-left animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-2xl">
+            <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6 border-b border-slate-800 pb-6">
+              <div>
+                <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">{idea.title}</h4>
+                <p className="text-blue-400 font-medium text-lg">{idea.tagline}</p>
+              </div>
+              <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${idea.difficulty === 'Advanced' ? 'bg-red-900/20 text-red-400 border-red-900/50' :
+                idea.difficulty === 'Intermediate' ? 'bg-yellow-900/20 text-yellow-400 border-yellow-900/50' :
+                  'bg-green-900/20 text-green-400 border-green-900/50'
+                }`}>
+                {idea.difficulty}
+              </span>
             </div>
-            <button onClick={generate} className="text-xs text-slate-400 hover:text-white underline">Try another</button>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <h5 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <Layers size={16} /> Key Features
+                </h5>
+                <ul className="space-y-3">
+                  {idea.features?.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3 text-slate-300">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0"></span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h5 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <Code size={16} /> Tech Stack
+                </h5>
+                <div className="flex flex-wrap gap-2">
+                  {idea.tags?.map(t => (
+                    <span key={t} className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 font-medium">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center pt-2">
+              <button
+                onClick={generate}
+                className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 mx-auto hover:bg-slate-900 px-4 py-2 rounded-full"
+              >
+                <Sparkles size={14} /> Generate Another Idea
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -512,7 +637,7 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-slate-950 font-sans text-slate-200 selection:bg-blue-500 selection:text-white">
-      
+
       {/* --- DYNAMIC BACKGROUND (UPDATED COLORS) --- */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-blue-900/20 blur-[100px] animate-pulse"></div>
@@ -525,16 +650,16 @@ export default function Portfolio() {
         {/* High opacity and border for contrast */}
         <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/90 backdrop-blur-md shadow-2xl border-slate-800 scale-100' : 'bg-transparent border-transparent scale-105'}`}>
           {['About', 'Skills', 'Projects', 'Education'].map((item) => (
-            <NavLink 
-              key={item} 
-              href={`#${item.toLowerCase()}`} 
-              label={item} 
+            <NavLink
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              label={item}
               active={activeSection === item.toLowerCase()}
             />
           ))}
           <div className="w-px h-3 sm:h-4 bg-slate-700 mx-1 sm:mx-2 flex-shrink-0"></div>
-          <a 
-            href="#contact" 
+          <a
+            href="#contact"
             onClick={(e) => {
               e.preventDefault();
               document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -552,7 +677,7 @@ export default function Portfolio() {
       <header id="about" className="pt-40 pb-20 px-6 relative scroll-mt-40">
         <div className="container mx-auto max-w-5xl">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-            
+
             <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-8 animate-in slide-in-from-bottom-10 duration-1000">
               <div>
                 {/* UPDATED: Badge colors */}
@@ -567,24 +692,24 @@ export default function Portfolio() {
                   </span>
                 </h1>
               </div>
-              
+
               <p className="text-xl text-slate-400 leading-relaxed max-w-2xl">
                 {PERSONAL_INFO.headline} <br className="hidden md:block" />
                 {PERSONAL_INFO.about}
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                <a 
-                  href={PERSONAL_INFO.github} 
-                  target="_blank" 
+                <a
+                  href={PERSONAL_INFO.github}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all flex items-center gap-2 shadow-lg hover:shadow-white/10"
                 >
                   <Github size={20} /> GitHub
                 </a>
-                <a 
-                  href={PERSONAL_INFO.linkedin} 
-                  target="_blank" 
+                <a
+                  href={PERSONAL_INFO.linkedin}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center gap-2"
                 >
@@ -596,13 +721,13 @@ export default function Portfolio() {
             <div className="order-1 md:order-2 flex-1 flex justify-center relative">
               <div className="relative w-64 h-64 md:w-80 md:h-80">
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
-                <img 
-                  src={PERSONAL_INFO.profileImage} 
+                <img
+                  src={PERSONAL_INFO.profileImage}
                   alt="Profile"
                   className="relative w-full h-full object-cover rounded-[2rem] border-4 border-slate-800 shadow-2xl rotate-3 hover:rotate-0 transition-all duration-500 bg-slate-800"
                   onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${PERSONAL_INFO.name}`; }}
                 />
-                
+
                 <div className="absolute -bottom-6 -left-6 bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-blue-500/20">
                   <div className="bg-blue-900/50 p-2 rounded-full text-blue-400"><Code size={20} /></div>
                   <div>
@@ -653,11 +778,11 @@ export default function Portfolio() {
             <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-800 -translate-x-1/2"></div>
             {EDUCATION.map((education, idx) => <EducationCard key={idx} education={education} isLatest={idx === 0} />)}
           </div>
-          
+
           <div className="mt-20 text-center">
-            <a 
-              href={PERSONAL_INFO.resumeLink} 
-              target="_blank" 
+            <a
+              href={PERSONAL_INFO.resumeLink}
+              target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all shadow-lg hover:shadow-white/20"
             >
@@ -674,15 +799,15 @@ export default function Portfolio() {
               I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href={`mailto:${PERSONAL_INFO.email}`} 
+              <a
+                href={`mailto:${PERSONAL_INFO.email}`}
                 className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
               >
                 <Mail size={20} /> {PERSONAL_INFO.email}
               </a>
-              <a 
-                href={PERSONAL_INFO.linkedin} 
-                target="_blank" 
+              <a
+                href={PERSONAL_INFO.linkedin}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center justify-center gap-2"
               >
@@ -690,7 +815,7 @@ export default function Portfolio() {
               </a>
             </div>
           </div>
-          
+
           {/* Decorative background elements */}
           <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-900/20 rounded-full mix-blend-screen filter blur-3xl"></div>
