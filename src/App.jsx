@@ -80,6 +80,14 @@ const PROJECTS = [
     github: "https://github.com/codemacUT/prompt2pic-ai",
     demo: null,
     image: "https://placehold.co/600x400/1e293b/cbd5e1?text=AI+Telegram+Bot"
+  },
+  {
+    title: "Geo Data Quality Dashboard",
+    description: "Operational dashboard for validating mapped merchant locations, segmenting active/passive entities, and surfacing geospatial inconsistencies quickly.",
+    tags: ["SQL", "GIS", "Data Quality"],
+    github: null,
+    demo: null,
+    image: "https://placehold.co/600x400/1e293b/cbd5e1?text=Geo+Data+Dashboard"
   }
 ];
 
@@ -156,7 +164,9 @@ async function callGeminiAPI(prompt, systemInstruction, isJson = false) {
       const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
       if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        const apiMessage = errorData?.error?.message;
+        throw new Error(apiMessage || `HTTP Error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -368,7 +378,14 @@ const ExperienceCard = ({ item, index }) => (
 // --- AI COMPONENTS ---
 const ChatInterface = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([{ role: 'assistant', text: "Hi! I'm Utkarsh's AI assistant. Ask me about his skills or projects." }]);
+  const [messages, setMessages] = useState([
+    {
+      role: 'assistant',
+      text: apiKey
+        ? "Hi! I'm Utkarsh's AI assistant. Ask me about his skills or projects."
+        : "Hi! I'm running in demo mode because the Gemini API key is not configured. You can still ask about skills, projects, and contact details."
+    }
+  ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
@@ -506,8 +523,12 @@ const ChatInterface = () => {
 
       const reply = await callGeminiAPI(msg, systemPrompt);
       setMessages(p => [...p, { role: 'assistant', text: reply }]);
-    } catch {
-      setMessages(p => [...p, { role: 'assistant', text: "Connection error. Please check your API Key." }]);
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : "Unknown error";
+      const assistantMessage = !apiKey
+        ? "Demo mode is active. Add VITE_GEMINI_API_KEY to your local .env file and restart the app to enable live AI responses."
+        : `I couldn't fetch a live AI response (${errorMessage}). Please verify your API key and restart the app.`;
+      setMessages(p => [...p, { role: 'assistant', text: assistantMessage }]);
     }
     setLoading(false);
   };
