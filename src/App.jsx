@@ -178,15 +178,14 @@ async function callGeminiAPI(prompt, systemInstruction, isJson = false) {
 // --- COMPONENTS ---
 
 const SectionTitle = ({ children, id, subtitle }) => (
-  <div className="mb-12 text-center md:text-left">
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/70 border border-slate-700 text-xs font-semibold tracking-widest uppercase text-cyan-300 mb-4">
-      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-      Section
+  <div className="mb-10 text-center md:text-left">
+    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-[11px] font-semibold tracking-[0.2em] uppercase text-cyan-200 mb-3">
+      Portfolio
     </div>
-    <h2 id={id} className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
+    <h2 id={id} className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-3">
       {children}
     </h2>
-    <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto md:mx-0">{subtitle}</p>
+    <p className="text-base text-slate-300/85 max-w-2xl mx-auto md:mx-0">{subtitle}</p>
   </div>
 );
 
@@ -235,7 +234,7 @@ const NavLink = ({ href, label, onClick, active }) => (
       document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
       if (onClick) onClick();
     }}
-    className={`relative px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-900/40' : 'text-slate-300/90 hover:text-white hover:bg-slate-800/80'
+    className={`relative px-2.5 sm:px-3.5 md:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'bg-cyan-400/20 text-cyan-100 border border-cyan-400/40' : 'text-slate-300/90 hover:text-white hover:bg-slate-800/70 border border-transparent'
       }`}
   >
     {label}
@@ -243,14 +242,14 @@ const NavLink = ({ href, label, onClick, active }) => (
 );
 
 const ProjectCard = ({ project }) => (
-  <div className="group relative rounded-3xl overflow-hidden border border-slate-800/90 bg-gradient-to-b from-slate-900 to-slate-950 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:-translate-y-2 hover:border-cyan-500/40">
+  <div className="group relative rounded-3xl overflow-hidden border border-slate-700/70 bg-slate-900/70 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:-translate-y-1.5 hover:border-cyan-400/60">
     <div className="aspect-video overflow-hidden bg-slate-800 relative">
       <img
         src={project.image}
         alt={project.title}
         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-85 group-hover:opacity-100"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-70 group-hover:opacity-95 transition-opacity duration-300 flex items-end justify-between p-5">
+      <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-[#050816]/30 to-transparent opacity-70 group-hover:opacity-95 transition-opacity duration-300 flex items-end justify-between p-5">
         <div className="flex gap-3">
           {project.github && (
             <a
@@ -278,11 +277,11 @@ const ProjectCard = ({ project }) => (
       </div>
     </div>
     <div className="p-7">
-      <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">{project.title}</h3>
-      <p className="text-slate-400 mb-6 leading-relaxed text-sm md:text-base">{project.description}</p>
+      <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-cyan-200 transition-colors">{project.title}</h3>
+      <p className="text-slate-300/85 mb-6 leading-relaxed text-sm md:text-base">{project.description}</p>
       <div className="flex flex-wrap gap-2">
         {project.tags.map((tag, i) => (
-          <span key={i} className="px-3 py-1 bg-slate-900 text-cyan-100 border border-slate-700 text-[11px] font-semibold rounded-full uppercase tracking-wider">
+          <span key={i} className="px-3 py-1 bg-slate-950/80 text-cyan-100 border border-slate-700 text-[11px] font-semibold rounded-full uppercase tracking-wider">
             {tag}
           </span>
         ))}
@@ -292,57 +291,32 @@ const ProjectCard = ({ project }) => (
 );
 
 const EducationCard = ({ education, isLatest }) => (
-  <div className="relative pl-8 md:pl-0">
-    {/* Mobile Line */}
-    <div className="md:hidden absolute left-2 top-2 bottom-0 w-0.5 bg-slate-800"></div>
-
-    <div className="md:flex items-center justify-between group">
-      <div className="hidden md:block w-1/2 pr-12 text-right">
-        <span className={`text-sm font-bold tracking-widest uppercase ${isLatest ? 'text-green-400' : 'text-slate-500'}`}>
-          {education.period}
-        </span>
-        <h3 className="text-xl font-bold text-white mt-1">{education.institution}</h3>
-      </div>
-
-      {/* Timeline Dot */}
-      <div className={`absolute left-0 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full border-4 z-10 transition-all duration-300 
-        ${isLatest
-          ? 'bg-green-500 border-green-900 shadow-[0_0_0_4px_rgba(34,197,94,0.2)]'
-          : 'bg-slate-900 border-slate-700 shadow-[0_0_0_4px_rgba(30,41,59,0.5)]'
-        }`}>
-        {isLatest && <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></div>}
-      </div>
-
-      <div className="md:w-1/2 md:pl-12 pb-16">
-        <div className="md:hidden mb-2">
-          <span className={`text-xs font-bold px-2 py-1 rounded ${isLatest ? 'text-green-300 bg-green-900/30 border border-green-800' : 'text-slate-400 bg-slate-800 border border-slate-700'}`}>
-            {education.period}
-          </span>
-        </div>
-        <h4 className="text-lg font-bold text-slate-200 md:mb-1 group-hover:text-blue-400 transition-colors">{education.degree}</h4>
-        <h5 className="text-md text-slate-500 md:hidden mb-2">{education.institution}</h5>
-        <p className="text-slate-400 text-sm leading-relaxed">{education.description}</p>
-      </div>
+  <div className={`rounded-2xl border p-6 md:p-7 transition-all duration-300 ${isLatest ? 'border-cyan-400/40 bg-cyan-500/10' : 'border-slate-700 bg-slate-900/60'}`}>
+    <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+      <h4 className="text-lg font-bold text-white">{education.degree}</h4>
+      <span className="text-xs px-3 py-1 rounded-full border border-slate-600 text-slate-300">{education.period}</span>
     </div>
+    <p className="text-cyan-200 font-medium mb-2">{education.institution}</p>
+    <p className="text-sm text-slate-300/85 leading-relaxed">{education.description}</p>
   </div>
 );
 
 const ExperienceCard = ({ item, index }) => (
   <Reveal delay={index * 120}>
-    <div className="group relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/70 backdrop-blur-sm p-7 md:p-8 shadow-xl shadow-slate-950/40 hover:border-cyan-500/50 transition-all duration-500 hover:-translate-y-1">
-      <div className="absolute -top-20 -right-16 h-44 w-44 rounded-full bg-cyan-500/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
+    <div className="group relative overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/70 backdrop-blur-sm p-7 md:p-8 shadow-xl shadow-slate-950/40 hover:border-cyan-400/50 transition-all duration-500 hover:-translate-y-1">
+      <div className="absolute -top-20 -right-16 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
       <div className="relative z-10">
         <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
           <div>
             <h3 className="text-xl md:text-2xl font-bold text-white">{item.role}</h3>
-            <p className="text-cyan-300 font-semibold mt-1">{item.company}</p>
+            <p className="text-cyan-200 font-semibold mt-1">{item.company}</p>
           </div>
-          <span className="text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-200 border border-cyan-500/30">
+          <span className="text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-100 border border-cyan-400/30">
             {item.period}
           </span>
         </div>
 
-        <p className="text-slate-300 leading-relaxed mb-5">{item.summary}</p>
+        <p className="text-slate-300/90 leading-relaxed mb-5">{item.summary}</p>
 
         <ul className="space-y-2.5 mb-6">
           {item.highlights.map((point, pointIdx) => (
@@ -757,7 +731,7 @@ export default function Portfolio() {
 
       {/* --- FLOATING NAVIGATION --- */}
       <div className="fixed top-3 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
-        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/75 backdrop-blur-xl shadow-2xl shadow-slate-950/70 border-slate-700 scale-100' : 'bg-slate-950/35 backdrop-blur-md border-slate-800/70 scale-100'}`}>
+        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-2xl transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-[#050816]/85 backdrop-blur-xl shadow-2xl shadow-black/50 border-cyan-500/30 scale-100' : 'bg-[#050816]/60 backdrop-blur-md border-slate-700/70 scale-100'}`}>
           {['About', 'Skills', 'Projects', 'Experience', 'Education'].map((item) => (
             <NavLink
               key={item}
@@ -773,7 +747,7 @@ export default function Portfolio() {
               e.preventDefault();
               document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs sm:text-sm font-bold rounded-full transition-all cursor-pointer shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 whitespace-nowrap flex-shrink-0"
+            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 whitespace-nowrap flex-shrink-0"
           >
             Hire Me
           </a>
@@ -783,27 +757,28 @@ export default function Portfolio() {
       <ChatInterface />
 
       {/* --- HERO SECTION --- */}
-      <header id="about" className="pt-36 pb-16 px-6 relative scroll-mt-40">
+      <header id="about" className="pt-32 pb-14 px-6 relative scroll-mt-40">
         <div className="container mx-auto max-w-6xl">
-          <div className="rounded-[2.5rem] border border-slate-800/80 bg-slate-900/45 backdrop-blur-xl px-6 py-10 md:px-12 md:py-14 shadow-2xl shadow-slate-950/40">
+          <div className="rounded-[2rem] border border-cyan-500/20 bg-[#050816]/75 backdrop-blur-xl px-6 py-10 md:px-12 md:py-14 shadow-2xl shadow-black/50">
             <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
 
               <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-7">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 text-cyan-300 text-xs font-bold mb-4 border border-cyan-800/70">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-200 text-xs font-bold mb-4 border border-cyan-400/40">
                     <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span></span>
                     Available for Work
                   </div>
                   <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.05]">
-                    Building products that
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300 mt-2">
-                      feel simple.
+                    {PERSONAL_INFO.name}
+                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-violet-300 mt-2 text-2xl md:text-4xl">
+                      {PERSONAL_INFO.role}
                     </span>
                   </h1>
                 </div>
 
-                <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
-                  {PERSONAL_INFO.headline} <br className="hidden md:block" />
+                <p className="text-lg md:text-xl text-slate-300/90 leading-relaxed max-w-2xl">
+                  {PERSONAL_INFO.headline}
+                  <br className="hidden md:block" />
                   {PERSONAL_INFO.about}
                 </p>
 
@@ -812,7 +787,7 @@ export default function Portfolio() {
                     href={PERSONAL_INFO.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-7 py-3.5 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
+                    className="px-7 py-3.5 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
                   >
                     <Github size={20} /> GitHub
                   </a>
@@ -820,7 +795,7 @@ export default function Portfolio() {
                     href={PERSONAL_INFO.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-7 py-3.5 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
+                    className="px-7 py-3.5 bg-[#0077b5] text-white border border-transparent rounded-xl font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
                   >
                     <Linkedin size={20} /> LinkedIn
                   </a>
@@ -829,7 +804,7 @@ export default function Portfolio() {
 
               <div className="order-1 md:order-2 flex-1 flex justify-center relative">
                 <div className="relative w-64 h-64 md:w-80 md:h-80">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
                   <img
                     src={PERSONAL_INFO.profileImage}
                     alt="Profile"
@@ -837,7 +812,7 @@ export default function Portfolio() {
                     onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${PERSONAL_INFO.name}`; }}
                   />
 
-                  <div className="absolute -bottom-6 -left-6 bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
+                  <div className="absolute -bottom-6 -left-6 bg-[#050816]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-cyan-500/30 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
                     <div className="bg-cyan-900/50 p-2 rounded-full text-cyan-300"><Code size={20} /></div>
                     <div>
                       <p className="text-xs text-slate-400 font-bold uppercase">Role</p>
@@ -853,7 +828,7 @@ export default function Portfolio() {
       </header>
 
       {/* --- MAIN CONTENT --- */}
-      <main className="container mx-auto px-6 py-16 space-y-28 max-w-6xl">
+      <main className="container mx-auto px-6 py-16 space-y-24 max-w-6xl">
 
         {/* SKILLS */}
         <section id="skills" className="scroll-mt-40">
@@ -863,7 +838,7 @@ export default function Portfolio() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
             {SKILLS.map((skill, idx) => (
               <Reveal key={idx} delay={idx * 90}>
-                <div className={`bg-slate-900/70 backdrop-blur-sm p-6 rounded-3xl border border-slate-800 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
+                <div className={`bg-[#0a1124]/75 backdrop-blur-sm p-6 rounded-3xl border border-slate-700 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform`}>
                     {skill.icon}
                   </div>
@@ -901,12 +876,11 @@ export default function Portfolio() {
         </section>
 
         {/* EDUCATION */}
-        <section id="education" className="max-w-4xl mx-auto scroll-mt-40">
+        <section id="education" className="max-w-5xl mx-auto scroll-mt-40">
           <Reveal>
             <SectionTitle subtitle="My academic journey and educational background.">Education</SectionTitle>
           </Reveal>
-          <div className="relative border-l-2 border-slate-800 ml-3 md:ml-0 md:border-l-0 space-y-16">
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-800 -translate-x-1/2"></div>
+          <div className="grid md:grid-cols-2 gap-6">
             {EDUCATION.map((education, idx) => (
               <Reveal key={idx} delay={idx * 120}>
                 <EducationCard education={education} isLatest={idx === 0} />
@@ -919,7 +893,7 @@ export default function Portfolio() {
               href={PERSONAL_INFO.resumeLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all shadow-lg hover:shadow-white/20"
+               className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-200 transition-all shadow-lg hover:shadow-white/20"
             >
               <FileText size={18} /> Download Full Resume
             </a>
@@ -927,7 +901,7 @@ export default function Portfolio() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="bg-slate-900/80 backdrop-blur-md rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden scroll-mt-40 border border-slate-800">
+        <section id="contact" className="bg-[#050816]/80 backdrop-blur-md rounded-[2rem] p-10 md:p-16 text-center relative overflow-hidden scroll-mt-40 border border-cyan-500/20">
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Ready to collaborate?</h2>
             <p className="text-slate-400 text-lg mb-10">
@@ -936,7 +910,7 @@ export default function Portfolio() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href={`mailto:${PERSONAL_INFO.email}`}
-                className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                className="px-8 py-4 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
               >
                 <Mail size={20} /> {PERSONAL_INFO.email}
               </a>
@@ -944,7 +918,7 @@ export default function Portfolio() {
                 href={PERSONAL_INFO.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center justify-center gap-2"
+                className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-xl font-bold hover:bg-[#006097] transition-all flex items-center justify-center gap-2"
               >
                 <Linkedin size={20} /> LinkedIn
               </a>
