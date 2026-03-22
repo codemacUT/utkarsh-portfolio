@@ -54,11 +54,14 @@ const PERSONAL_INFO = {
 
 const SKILLS = [
   { name: "Flutter & Dart", icon: <Smartphone size={24} />, level: "Specialist", color: "bg-blue-900/30 text-blue-300 border-blue-800" },
+  { name: "SQL & PostgreSQL", icon: <Server size={24} />, level: "Advanced", color: "bg-indigo-900/30 text-indigo-300 border-indigo-800" },
+  { name: "Excel Data Analysis", icon: <Layers size={24} />, level: "Advanced", color: "bg-emerald-900/30 text-emerald-300 border-emerald-800" },
+  { name: "GIS & Mappls", icon: <Globe size={24} />, level: "Intermediate", color: "bg-cyan-900/30 text-cyan-300 border-cyan-800" },
   { name: "n8n Automation", icon: <Zap size={24} />, level: "Advanced", color: "bg-orange-900/30 text-orange-300 border-orange-800" },
   { name: "Gemini AI API", icon: <Sparkles size={24} />, level: "Intermediate", color: "bg-purple-900/30 text-purple-300 border-purple-800" },
-  { name: "Firebase & Auth", icon: <Database size={24} />, level: "Advanced", color: "bg-yellow-900/30 text-yellow-300 border-yellow-800" },
-  { name: "PostgreSQL", icon: <Server size={24} />, level: "Intermediate", color: "bg-indigo-900/30 text-indigo-300 border-indigo-800" },
-  { name: "C++ / DSA", icon: <Code size={24} />, level: "Proficient", color: "bg-slate-800 text-slate-300 border-slate-700" },
+  { name: "Firebase & REST APIs", icon: <Database size={24} />, level: "Advanced", color: "bg-yellow-900/30 text-yellow-300 border-yellow-800" },
+  { name: "Java + C++ / DSA", icon: <Code size={24} />, level: "Proficient", color: "bg-slate-800 text-slate-300 border-slate-700" },
+  { name: "Git & GitHub Actions", icon: <Command size={24} />, level: "Intermediate", color: "bg-rose-900/30 text-rose-300 border-rose-800" },
 ];
 
 const PROJECTS = [
