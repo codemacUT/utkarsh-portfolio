@@ -232,7 +232,8 @@ const scrollToSectionFast = (href) => {
   if (!target) return;
 
   const startY = window.scrollY;
-  const targetY = target.getBoundingClientRect().top + window.scrollY - 96;
+  const offset = window.innerWidth < 768 ? 84 : 96;
+  const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
   const distance = targetY - startY;
   const duration = 380;
   let startTime = null;
@@ -804,6 +805,7 @@ export default function Portfolio() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [scrollY, setScrollY] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -819,6 +821,15 @@ export default function Portfolio() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    document.documentElement.style.overflow = mobileMenuOpen ? 'hidden' : 'auto';
+    return () => {
+      document.documentElement.style.overflow = 'auto';
+    };
+  }, [mobileMenuOpen]);
+
+  const navItems = ['About', 'Skills', 'Projects', 'Experience', 'Education'];
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500 selection:text-slate-950">
 
@@ -831,9 +842,9 @@ export default function Portfolio() {
       </div>
 
       {/* --- FLOATING NAVIGATION --- */}
-      <div className="fixed top-3 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
-        <nav className={`top-nav flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-2xl transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'is-scrolled' : ''}`}>
-          {['About', 'Skills', 'Projects', 'Experience', 'Education'].map((item) => (
+      <div className="fixed top-2 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
+        <nav className={`top-nav hidden md:flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-2xl transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'is-scrolled' : ''}`}>
+          {navItems.map((item) => (
             <NavLink
               key={item}
               href={`#${item.toLowerCase()}`}
@@ -846,13 +857,59 @@ export default function Portfolio() {
             href="#contact"
             onClick={(e) => {
               e.preventDefault();
-              document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+              scrollToSectionFast('#contact');
             }}
             className="hire-btn px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 whitespace-nowrap flex-shrink-0"
           >
             Hire Me
           </a>
         </nav>
+
+        <div className="mobile-top-nav md:hidden">
+          <div className={`top-nav mobile-top-nav-bar border ${scrolled ? 'is-scrolled' : ''}`}>
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="mobile-nav-toggle"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            <span className="mobile-nav-title">Utkarsh</span>
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSectionFast('#contact');
+                setMobileMenuOpen(false);
+              }}
+              className="mobile-hire-btn"
+            >
+              Hire
+            </a>
+          </div>
+
+          <div
+            className={`mobile-nav-backdrop ${mobileMenuOpen ? 'is-open' : ''}`}
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden={!mobileMenuOpen}
+          />
+
+          <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'is-open' : ''}`}>
+            {navItems.map((item) => (
+              <button
+                key={item}
+                onClick={() => {
+                  scrollToSectionFast(`#${item.toLowerCase()}`);
+                  setMobileMenuOpen(false);
+                }}
+                className={`mobile-nav-item ${activeSection === item.toLowerCase() ? 'mobile-nav-item-active' : ''}`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <ChatInterface />

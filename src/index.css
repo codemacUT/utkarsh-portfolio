@@ -294,3 +294,117 @@
     transition: none !important;
   }
 }
+
+.mobile-top-nav {
+  width: 100%;
+}
+
+.mobile-top-nav-bar {
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  padding: 0 8px;
+  gap: 8px;
+}
+
+.mobile-nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.mobile-nav-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.01em;
+}
+
+.mobile-hire-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.72rem;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(120deg, #06b6d4, #2563eb);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.6);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+  z-index: 49;
+}
+
+.mobile-nav-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-nav-drawer {
+  position: fixed;
+  top: 58px;
+  left: 8px;
+  right: 8px;
+  z-index: 51;
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(5, 8, 22, 0.96);
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.45);
+  transform: translateY(-10px) scale(0.985);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.mobile-nav-drawer.is-open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-nav-item {
+  border-radius: 10px;
+  padding: 0.66rem 0.75rem;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.92);
+  border: 1px solid transparent;
+  background: rgba(15, 23, 42, 0.65);
+}
+
+.mobile-nav-item-active {
+  color: #cffafe;
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(8, 47, 73, 0.55);
+}
+
+@media (min-width: 768px) {
+  .mobile-nav-backdrop,
+  .mobile-nav-drawer,
+  .mobile-top-nav {
+    display: none;
+  }
+}
