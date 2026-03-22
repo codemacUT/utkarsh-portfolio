@@ -80,14 +80,6 @@ const PROJECTS = [
     github: "https://github.com/codemacUT/prompt2pic-ai",
     demo: null,
     image: "https://placehold.co/600x400/1e293b/cbd5e1?text=AI+Telegram+Bot"
-  },
-  {
-    title: "Automation Workflow System",
-    description: "Modular automation pipelines designed for API calls, parsing, and backend tasks. Optimized data flow between services to reduce latency.",
-    tags: ["n8n", "REST APIs", "Automation"],
-    github: null,
-    demo: null,
-    image: "https://placehold.co/600x400/1e293b/cbd5e1?text=Automation+System"
   }
 ];
 
@@ -183,11 +175,15 @@ async function callGeminiAPI(prompt, systemInstruction, isJson = false) {
 // --- COMPONENTS ---
 
 const SectionTitle = ({ children, id, subtitle }) => (
-  <div className="mb-16 text-center md:text-left">
-    <h2 id={id} className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+  <div className="mb-12 text-center md:text-left">
+    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/70 border border-slate-700 text-xs font-semibold tracking-widest uppercase text-cyan-300 mb-4">
+      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
+      Section
+    </div>
+    <h2 id={id} className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
       {children}
     </h2>
-    <p className="text-lg text-slate-400 max-w-2xl">{subtitle}</p>
+    <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto md:mx-0">{subtitle}</p>
   </div>
 );
 
@@ -236,7 +232,7 @@ const NavLink = ({ href, label, onClick, active }) => (
       document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
       if (onClick) onClick();
     }}
-    className={`relative px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+    className={`relative px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-900/40' : 'text-slate-300/90 hover:text-white hover:bg-slate-800/80'
       }`}
   >
     {label}
@@ -244,21 +240,21 @@ const NavLink = ({ href, label, onClick, active }) => (
 );
 
 const ProjectCard = ({ project }) => (
-  <div className="group relative bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 shadow-lg hover:shadow-green-900/20 hover:border-green-500/30 transition-all duration-500 hover:-translate-y-2">
+  <div className="group relative rounded-3xl overflow-hidden border border-slate-800/90 bg-gradient-to-b from-slate-900 to-slate-950 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:-translate-y-2 hover:border-cyan-500/40">
     <div className="aspect-video overflow-hidden bg-slate-800 relative">
       <img
         src={project.image}
         alt={project.title}
-        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
+        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-85 group-hover:opacity-100"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex items-end justify-between p-6">
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-70 group-hover:opacity-95 transition-opacity duration-300 flex items-end justify-between p-5">
         <div className="flex gap-3">
           {project.github && (
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 bg-white text-slate-900 rounded-full hover:bg-slate-200 transition-colors shadow-lg"
+              className="p-2.5 bg-white text-slate-900 rounded-full hover:bg-slate-200 transition-colors shadow-lg"
               title="View Code"
             >
               <Github size={20} />
@@ -278,12 +274,12 @@ const ProjectCard = ({ project }) => (
         </div>
       </div>
     </div>
-    <div className="p-8">
-      <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors">{project.title}</h3>
-      <p className="text-slate-400 mb-6 leading-relaxed">{project.description}</p>
+    <div className="p-7">
+      <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">{project.title}</h3>
+      <p className="text-slate-400 mb-6 leading-relaxed text-sm md:text-base">{project.description}</p>
       <div className="flex flex-wrap gap-2">
         {project.tags.map((tag, i) => (
-          <span key={i} className="px-3 py-1 bg-slate-800 text-blue-200 border border-slate-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+          <span key={i} className="px-3 py-1 bg-slate-900 text-cyan-100 border border-slate-700 text-[11px] font-semibold rounded-full uppercase tracking-wider">
             {tag}
           </span>
         ))}
@@ -747,8 +743,7 @@ export default function Portfolio() {
 
       {/* --- FLOATING NAVIGATION --- */}
       <div className="fixed top-3 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
-        {/* High opacity and border for contrast */}
-        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-slate-950/70 border-slate-700 scale-100' : 'bg-transparent border-transparent scale-105'}`}>
+        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/75 backdrop-blur-xl shadow-2xl shadow-slate-950/70 border-slate-700 scale-100' : 'bg-slate-950/35 backdrop-blur-md border-slate-800/70 scale-100'}`}>
           {['About', 'Skills', 'Projects', 'Experience', 'Education'].map((item) => (
             <NavLink
               key={item}
@@ -774,86 +769,87 @@ export default function Portfolio() {
       <ChatInterface />
 
       {/* --- HERO SECTION --- */}
-      <header id="about" className="pt-40 pb-20 px-6 relative scroll-mt-40">
-        <div className="container mx-auto max-w-5xl">
-          <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
+      <header id="about" className="pt-36 pb-16 px-6 relative scroll-mt-40">
+        <div className="container mx-auto max-w-6xl">
+          <div className="rounded-[2.5rem] border border-slate-800/80 bg-slate-900/45 backdrop-blur-xl px-6 py-10 md:px-12 md:py-14 shadow-2xl shadow-slate-950/40">
+            <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
 
-            <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-8">
-              <div>
-                {/* UPDATED: Badge colors */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 text-cyan-300 text-xs font-bold mb-4 border border-cyan-800/70">
-                  <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span></span>
-                  Available for Work
+              <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-7">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 text-cyan-300 text-xs font-bold mb-4 border border-cyan-800/70">
+                    <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span></span>
+                    Available for Work
+                  </div>
+                  <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.05]">
+                    Building products that
+                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300 mt-2">
+                      feel simple.
+                    </span>
+                  </h1>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-                  Hello, I'm <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300">
-                    {PERSONAL_INFO.name.split(' ')[0]}.
-                  </span>
-                </h1>
+
+                <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
+                  {PERSONAL_INFO.headline} <br className="hidden md:block" />
+                  {PERSONAL_INFO.about}
+                </p>
+
+                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                  <a
+                    href={PERSONAL_INFO.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-3.5 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
+                  >
+                    <Github size={20} /> GitHub
+                  </a>
+                  <a
+                    href={PERSONAL_INFO.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-3.5 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
+                  >
+                    <Linkedin size={20} /> LinkedIn
+                  </a>
+                </div>
               </div>
 
-              <p className="text-xl text-slate-400 leading-relaxed max-w-2xl">
-                {PERSONAL_INFO.headline} <br className="hidden md:block" />
-                {PERSONAL_INFO.about}
-              </p>
+              <div className="order-1 md:order-2 flex-1 flex justify-center relative">
+                <div className="relative w-64 h-64 md:w-80 md:h-80">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
+                  <img
+                    src={PERSONAL_INFO.profileImage}
+                    alt="Profile"
+                    className="relative w-full h-full object-cover rounded-[2rem] border-4 border-slate-800 shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500 bg-slate-800"
+                    onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${PERSONAL_INFO.name}`; }}
+                  />
 
-              <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                <a
-                  href={PERSONAL_INFO.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
-                >
-                  <Github size={20} /> GitHub
-                </a>
-                <a
-                  href={PERSONAL_INFO.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
-                >
-                  <Linkedin size={20} /> LinkedIn
-                </a>
-              </div>
-            </div>
-
-            <div className="order-1 md:order-2 flex-1 flex justify-center relative">
-              <div className="relative w-64 h-64 md:w-80 md:h-80">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
-                <img
-                  src={PERSONAL_INFO.profileImage}
-                  alt="Profile"
-                  className="relative w-full h-full object-cover rounded-[2rem] border-4 border-slate-800 shadow-2xl rotate-3 hover:rotate-0 transition-all duration-500 bg-slate-800"
-                  onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${PERSONAL_INFO.name}`; }}
-                />
-
-                <div className="absolute -bottom-6 -left-6 bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
-                  <div className="bg-cyan-900/50 p-2 rounded-full text-cyan-300"><Code size={20} /></div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-bold uppercase">Role</p>
-                    <p className="text-sm font-bold text-white">Software Developer</p>
+                  <div className="absolute -bottom-6 -left-6 bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
+                    <div className="bg-cyan-900/50 p-2 rounded-full text-cyan-300"><Code size={20} /></div>
+                    <div>
+                      <p className="text-xs text-slate-400 font-bold uppercase">Role</p>
+                      <p className="text-sm font-bold text-white">{PERSONAL_INFO.role}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
       </header>
 
       {/* --- MAIN CONTENT --- */}
-      <main className="container mx-auto px-6 py-20 space-y-32 max-w-6xl">
+      <main className="container mx-auto px-6 py-16 space-y-28 max-w-6xl">
 
         {/* SKILLS */}
         <section id="skills" className="scroll-mt-40">
           <Reveal>
             <SectionTitle subtitle="My technical toolkit and areas of expertise.">Expertise</SectionTitle>
           </Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
             {SKILLS.map((skill, idx) => (
               <Reveal key={idx} delay={idx * 90}>
-                <div className={`bg-slate-900/80 backdrop-blur-sm p-6 rounded-3xl border border-slate-800 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
+                <div className={`bg-slate-900/70 backdrop-blur-sm p-6 rounded-3xl border border-slate-800 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform`}>
                     {skill.icon}
                   </div>
@@ -870,7 +866,7 @@ export default function Portfolio() {
           <Reveal>
             <SectionTitle subtitle="Selected works demonstrating code quality and product thinking.">Featured Projects</SectionTitle>
           </Reveal>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
             {PROJECTS.map((project, idx) => (
               <Reveal key={idx} delay={idx * 100}>
                 <ProjectCard project={project} />
@@ -917,7 +913,7 @@ export default function Portfolio() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="bg-slate-900 rounded-[3rem] p-12 md:p-24 text-center relative overflow-hidden scroll-mt-40 border border-slate-800">
+        <section id="contact" className="bg-slate-900/80 backdrop-blur-md rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden scroll-mt-40 border border-slate-800">
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Ready to collaborate?</h2>
             <p className="text-slate-400 text-lg mb-10">
