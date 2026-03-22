@@ -32,6 +32,7 @@ import {
 // --- GEMINI API CONFIGURATION ---
 // SECURE: Access key from Environment Variables (Vite standard)
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-1.5-flash";
 
 // Debug: Check if API key is loaded
 if (import.meta.env.DEV) {
@@ -80,14 +81,6 @@ const PROJECTS = [
     github: "https://github.com/codemacUT/prompt2pic-ai",
     demo: null,
     image: "https://placehold.co/600x400/1e293b/cbd5e1?text=AI+Telegram+Bot"
-  },
-  {
-    title: "Geo Data Quality Dashboard",
-    description: "Operational dashboard for validating mapped merchant locations, segmenting active/passive entities, and surfacing geospatial inconsistencies quickly.",
-    tags: ["SQL", "GIS", "Data Quality"],
-    github: null,
-    demo: null,
-    image: "https://placehold.co/600x400/1e293b/cbd5e1?text=Geo+Data+Dashboard"
   }
 ];
 
@@ -142,7 +135,7 @@ async function callGeminiAPI(prompt, systemInstruction, isJson = false) {
     return "I'm currently running in demo mode. Utkarsh is a skilled developer specializing in Flutter, n8n automation, and backend integration!";
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
   const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: systemInstruction }] } };
 
   if (isJson) {
@@ -887,7 +880,7 @@ export default function Portfolio() {
           <Reveal>
             <SectionTitle subtitle="Selected works demonstrating code quality and product thinking.">Featured Projects</SectionTitle>
           </Reveal>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <div className="grid md:grid-cols-2 gap-7 max-w-5xl mx-auto">
             {PROJECTS.map((project, idx) => (
               <Reveal key={idx} delay={idx * 100}>
                 <ProjectCard project={project} />
