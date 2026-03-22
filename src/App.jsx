@@ -88,6 +88,24 @@ const PROJECTS = [
   }
 ];
 
+const EXPERIENCE = [
+  {
+    company: "Paytm Payments Services Ltd.",
+    role: "Operations & GIS Analytics Intern",
+    period: "Dec 2025 - Mar 2026",
+    location: "India",
+    summary: "Worked on operational and geospatial data quality workflows using SQL, Google Sheets, and Mappls (MapmyIndia) to improve mapping accuracy and integrity.",
+    highlights: [
+      "Queried and analyzed operational/geospatial datasets in SQL to identify mapping inconsistencies.",
+      "Segmented entities into active/passive categories to evaluate coverage and data accuracy.",
+      "Performed data cleaning and validation in Google Sheets with lookup and pivot techniques.",
+      "Validated and corrected location mappings in Mappls, reducing overlap and improving spatial precision.",
+      "Applied rule-based checks to detect inconsistencies and support corrective actions."
+    ],
+    tags: ["SQL", "GIS Analytics", "Google Sheets", "Mappls", "Data Quality"]
+  }
+];
+
 const EDUCATION = [
   {
     institution: "JSS Academy Of Technical Education",
@@ -169,6 +187,43 @@ const SectionTitle = ({ children, id, subtitle }) => (
     <p className="text-lg text-slate-400 max-w-2xl">{subtitle}</p>
   </div>
 );
+
+const Reveal = ({ children, delay = 0, y = 20, className = "" }) => {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.14 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0px)" : `translateY(${y}px)`,
+        transition: `opacity 700ms ease ${delay}ms, transform 700ms ease ${delay}ms`
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const NavLink = ({ href, label, onClick, active }) => (
   <a
@@ -270,6 +325,47 @@ const EducationCard = ({ education, isLatest }) => (
   </div>
 );
 
+const ExperienceCard = ({ item, index }) => (
+  <Reveal delay={index * 120}>
+    <div className="group relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/70 backdrop-blur-sm p-7 md:p-8 shadow-xl shadow-slate-950/40 hover:border-cyan-500/50 transition-all duration-500 hover:-translate-y-1">
+      <div className="absolute -top-20 -right-16 h-44 w-44 rounded-full bg-cyan-500/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
+      <div className="relative z-10">
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-xl md:text-2xl font-bold text-white">{item.role}</h3>
+            <p className="text-cyan-300 font-semibold mt-1">{item.company}</p>
+          </div>
+          <span className="text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-200 border border-cyan-500/30">
+            {item.period}
+          </span>
+        </div>
+
+        <p className="text-slate-300 leading-relaxed mb-5">{item.summary}</p>
+
+        <ul className="space-y-2.5 mb-6">
+          {item.highlights.map((point, pointIdx) => (
+            <li key={pointIdx} className="flex items-start gap-2.5 text-slate-400">
+              <ChevronRight size={14} className="mt-1 text-cyan-400 flex-shrink-0" />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex flex-wrap gap-2">
+          {item.tags.map((tag, tagIdx) => (
+            <span
+              key={tagIdx}
+              className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-950 text-slate-300 border border-slate-700"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </Reveal>
+);
+
 // --- AI COMPONENTS ---
 const ChatInterface = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -318,7 +414,7 @@ const ChatInterface = () => {
       }
 
       // Handle markdown-style bullet points
-      const bulletMatch = line.match(/^\s*[\*\-\•]\s*(.+)/);
+      const bulletMatch = line.match(/^\s*[*•-]\s*(.+)/);
       if (bulletMatch) {
         const content = bulletMatch[1];
         const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -381,7 +477,7 @@ const ChatInterface = () => {
     const msg = input; setInput(''); setLoading(true);
     setMessages(p => [...p, { role: 'user', text: msg }]);
     try {
-      const context = JSON.stringify({ PERSONAL_INFO, SKILLS, PROJECTS, EDUCATION });
+      const context = JSON.stringify({ PERSONAL_INFO, SKILLS, PROJECTS, EXPERIENCE, EDUCATION });
 
       const systemPrompt = `
         You are a professional portfolio assistant for ${PERSONAL_INFO.name}.
@@ -420,7 +516,7 @@ const ChatInterface = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {isOpen && (
-        <div className="mb-4 w-80 md:w-96 bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden animate-in slide-in-from-bottom-5">
+        <div className="mb-4 w-80 md:w-96 bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
           <div className="bg-slate-950 p-4 text-white flex justify-between items-center border-b border-slate-800">
             <div className="flex items-center gap-2 font-bold"><Bot size={18} className="text-blue-400" /> AI Assistant</div>
             <button onClick={() => setIsOpen(false)}><X size={18} /></button>
@@ -561,7 +657,7 @@ const IdeaGenerator = () => {
             </span>
           </button>
         ) : (
-          <div className="bg-slate-950/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 text-left animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-2xl">
+          <div className="bg-slate-950/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 text-left shadow-2xl">
             <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6 border-b border-slate-800 pb-6">
               <div>
                 <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">{idea.title}</h4>
@@ -625,7 +721,7 @@ export default function Portfolio() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
-      const sections = ['about', 'skills', 'projects', 'education', 'contact'];
+      const sections = ['about', 'skills', 'projects', 'experience', 'education', 'contact'];
       for (const id of sections) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= (el.offsetTop - 200)) setActiveSection(id);
@@ -636,20 +732,21 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 selection:bg-cyan-500 selection:text-slate-950">
 
       {/* --- DYNAMIC BACKGROUND (UPDATED COLORS) --- */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-blue-900/20 blur-[100px] animate-pulse"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/20 blur-[120px]"></div>
-        <div className="absolute top-[40%] left-[30%] w-[300px] h-[300px] rounded-full bg-purple-900/10 blur-[80px]"></div>
+        <div className="animated-grid-bg absolute inset-0 opacity-25" />
+        <div className="mesh-blob mesh-blob--one"></div>
+        <div className="mesh-blob mesh-blob--two"></div>
+        <div className="mesh-blob mesh-blob--three"></div>
       </div>
 
       {/* --- FLOATING NAVIGATION --- */}
       <div className="fixed top-3 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
         {/* High opacity and border for contrast */}
-        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/90 backdrop-blur-md shadow-2xl border-slate-800 scale-100' : 'bg-transparent border-transparent scale-105'}`}>
-          {['About', 'Skills', 'Projects', 'Education'].map((item) => (
+        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-full transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-slate-950/70 border-slate-700 scale-100' : 'bg-transparent border-transparent scale-105'}`}>
+          {['About', 'Skills', 'Projects', 'Experience', 'Education'].map((item) => (
             <NavLink
               key={item}
               href={`#${item.toLowerCase()}`}
@@ -664,7 +761,7 @@ export default function Portfolio() {
               e.preventDefault();
               document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-white text-xs sm:text-sm font-bold rounded-full transition-all cursor-pointer shadow-lg shadow-green-900/30 hover:shadow-green-900/50 whitespace-nowrap flex-shrink-0"
+            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs sm:text-sm font-bold rounded-full transition-all cursor-pointer shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 whitespace-nowrap flex-shrink-0"
           >
             Hire Me
           </a>
@@ -678,16 +775,16 @@ export default function Portfolio() {
         <div className="container mx-auto max-w-5xl">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
 
-            <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-8 animate-in slide-in-from-bottom-10 duration-1000">
+            <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-8">
               <div>
                 {/* UPDATED: Badge colors */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 text-green-400 text-xs font-bold mb-4 border border-green-800">
-                  <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 text-cyan-300 text-xs font-bold mb-4 border border-cyan-800/70">
+                  <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span></span>
                   Available for Work
                 </div>
                 <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
                   Hello, I'm <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300">
                     {PERSONAL_INFO.name.split(' ')[0]}.
                   </span>
                 </h1>
@@ -703,7 +800,7 @@ export default function Portfolio() {
                   href={PERSONAL_INFO.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all flex items-center gap-2 shadow-lg hover:shadow-white/10"
+                  className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
                 >
                   <Github size={20} /> GitHub
                 </a>
@@ -711,7 +808,7 @@ export default function Portfolio() {
                   href={PERSONAL_INFO.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center gap-2"
+                  className="px-8 py-4 bg-[#0077b5] text-white border border-transparent rounded-full font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
                 >
                   <Linkedin size={20} /> LinkedIn
                 </a>
@@ -728,11 +825,11 @@ export default function Portfolio() {
                   onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${PERSONAL_INFO.name}`; }}
                 />
 
-                <div className="absolute -bottom-6 -left-6 bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-blue-500/20">
-                  <div className="bg-blue-900/50 p-2 rounded-full text-blue-400"><Code size={20} /></div>
+                <div className="absolute -bottom-6 -left-6 bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
+                  <div className="bg-cyan-900/50 p-2 rounded-full text-cyan-300"><Code size={20} /></div>
                   <div>
                     <p className="text-xs text-slate-400 font-bold uppercase">Role</p>
-                    <p className="text-sm font-bold text-white">Full Stack Dev</p>
+                    <p className="text-sm font-bold text-white">Software Developer</p>
                   </div>
                 </div>
               </div>
@@ -747,36 +844,61 @@ export default function Portfolio() {
 
         {/* SKILLS */}
         <section id="skills" className="scroll-mt-40">
-          <SectionTitle subtitle="My technical toolkit and areas of expertise.">Expertise</SectionTitle>
+          <Reveal>
+            <SectionTitle subtitle="My technical toolkit and areas of expertise.">Expertise</SectionTitle>
+          </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {SKILLS.map((skill, idx) => (
-              // UPDATED: Dark mode card styles
-              <div key={idx} className={`bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-sm hover:shadow-lg hover:shadow-green-900/10 transition-all hover:-translate-y-1 group hover:border-green-500/50`}>
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform`}>
-                  {skill.icon}
+              <Reveal key={idx} delay={idx * 90}>
+                <div className={`bg-slate-900/80 backdrop-blur-sm p-6 rounded-3xl border border-slate-800 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform`}>
+                    {skill.icon}
+                  </div>
+                  <h3 className="font-bold text-slate-100 text-lg mb-1">{skill.name}</h3>
+                  <p className="text-sm text-slate-500 font-medium">{skill.level}</p>
                 </div>
-                <h3 className="font-bold text-slate-100 text-lg mb-1">{skill.name}</h3>
-                <p className="text-sm text-slate-500 font-medium">{skill.level}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* PROJECTS */}
         <section id="projects" className="scroll-mt-40">
-          <SectionTitle subtitle="Selected works demonstrating code quality and product thinking.">Featured Projects</SectionTitle>
+          <Reveal>
+            <SectionTitle subtitle="Selected works demonstrating code quality and product thinking.">Featured Projects</SectionTitle>
+          </Reveal>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {PROJECTS.map((project, idx) => <ProjectCard key={idx} project={project} />)}
+            {PROJECTS.map((project, idx) => (
+              <Reveal key={idx} delay={idx * 100}>
+                <ProjectCard project={project} />
+              </Reveal>
+            ))}
           </div>
           <IdeaGenerator />
         </section>
 
+        {/* EXPERIENCE */}
+        <section id="experience" className="scroll-mt-40">
+          <Reveal>
+            <SectionTitle subtitle="Industry internship experience aligned with operational analytics and geospatial data quality.">Experience</SectionTitle>
+          </Reveal>
+          <div className="grid gap-6">
+            {EXPERIENCE.map((item, idx) => <ExperienceCard key={idx} item={item} index={idx} />)}
+          </div>
+        </section>
+
         {/* EDUCATION */}
         <section id="education" className="max-w-4xl mx-auto scroll-mt-40">
-          <SectionTitle subtitle="My academic journey and educational background.">Education</SectionTitle>
+          <Reveal>
+            <SectionTitle subtitle="My academic journey and educational background.">Education</SectionTitle>
+          </Reveal>
           <div className="relative border-l-2 border-slate-800 ml-3 md:ml-0 md:border-l-0 space-y-16">
             <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-800 -translate-x-1/2"></div>
-            {EDUCATION.map((education, idx) => <EducationCard key={idx} education={education} isLatest={idx === 0} />)}
+            {EDUCATION.map((education, idx) => (
+              <Reveal key={idx} delay={idx * 120}>
+                <EducationCard education={education} isLatest={idx === 0} />
+              </Reveal>
+            ))}
           </div>
 
           <div className="mt-20 text-center">

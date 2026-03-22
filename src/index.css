@@ -11,3 +11,56 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+.animated-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at center, black 32%, transparent 85%);
+}
+
+.mesh-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  opacity: 0.2;
+  animation: drift 18s ease-in-out infinite;
+}
+
+.mesh-blob--one {
+  width: 540px;
+  height: 540px;
+  right: -140px;
+  top: -120px;
+  background: #06b6d4;
+}
+
+.mesh-blob--two {
+  width: 620px;
+  height: 620px;
+  left: -190px;
+  bottom: -180px;
+  background: #3b82f6;
+  animation-delay: 3s;
+}
+
+.mesh-blob--three {
+  width: 420px;
+  height: 420px;
+  left: 38%;
+  top: 35%;
+  background: #8b5cf6;
+  animation-delay: 6s;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -24px, 0) scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mesh-blob {
+    animation: none;
+  }
+}
