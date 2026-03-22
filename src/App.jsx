@@ -26,9 +26,7 @@ import {
   Bot,
   Loader2,
   Layers,
-  Command,
-  Sun,
-  Moon
+  Command
 } from 'lucide-react';
 
 // --- GEMINI API CONFIGURATION ---
@@ -44,7 +42,7 @@ if (import.meta.env.DEV) {
 // --- USER DATA CONFIGURATION ---
 const PERSONAL_INFO = {
   name: "Utkarsh Tiwari",
-  role: "Software Developer (Flutter + Automation)",
+  role: "Software Developer (Flutter + Data Analytics)",
   headline: "Crafting digital experiences with code & creativity.",
   about: "I am a pre-final year B.Tech student and passionate Flutter Developer. I bridge the gap between complex backend logic and intuitive mobile interfaces. My work focuses on scalable cross-platform apps and intelligent automation workflows that save time and solve real problems.",
   email: "utkt9502@gmail.com",
@@ -219,8 +217,9 @@ const Reveal = ({ children, delay = 0, y = 20, className = "" }) => {
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0px)" : `translateY(${y}px)`,
-        transition: `opacity 700ms ease ${delay}ms, transform 700ms ease ${delay}ms`
+        filter: visible ? "blur(0px)" : "blur(6px)",
+        transform: visible ? "translateY(0px) scale(1)" : `translateY(${y}px) scale(0.985)`,
+        transition: `opacity 700ms ease ${delay}ms, transform 700ms ease ${delay}ms, filter 700ms ease ${delay}ms`
       }}
     >
       {children}
@@ -228,15 +227,40 @@ const Reveal = ({ children, delay = 0, y = 20, className = "" }) => {
   );
 };
 
+const scrollToSectionFast = (href) => {
+  const target = document.querySelector(href);
+  if (!target) return;
+
+  const startY = window.scrollY;
+  const targetY = target.getBoundingClientRect().top + window.scrollY - 96;
+  const distance = targetY - startY;
+  const duration = 380;
+  let startTime = null;
+
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const animate = (timestamp) => {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOutCubic(progress);
+    window.scrollTo(0, startY + distance * eased);
+
+    if (progress < 1) requestAnimationFrame(animate);
+  };
+
+  requestAnimationFrame(animate);
+};
+
 const NavLink = ({ href, label, onClick, active }) => (
   <a
     href={href}
     onClick={(e) => {
       e.preventDefault();
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      scrollToSectionFast(href);
       if (onClick) onClick();
     }}
-    className={`relative px-2.5 sm:px-3.5 md:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'bg-cyan-400/20 text-cyan-100 border border-cyan-400/40' : 'text-slate-300/90 hover:text-white hover:bg-slate-800/70 border border-transparent'
+    className={`nav-link relative px-2.5 sm:px-3.5 md:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap ${active ? 'nav-link-active bg-cyan-400/20 text-cyan-100 border border-cyan-400/40' : 'text-slate-300/90 hover:text-white hover:bg-slate-800/70 border border-transparent'
       }`}
   >
     {label}
@@ -244,7 +268,28 @@ const NavLink = ({ href, label, onClick, active }) => (
 );
 
 const ProjectCard = ({ project }) => (
-  <div className="project-card premium-card group relative rounded-3xl overflow-hidden border border-slate-700/70 bg-slate-900/70 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:-translate-y-1.5 hover:border-cyan-400/60">
+  <div
+    className="project-card premium-card group relative rounded-3xl overflow-hidden border border-slate-700/70 bg-slate-900/70 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:border-cyan-400/60"
+    style={{ '--mx': '50%', '--my': '50%', '--rx': '0deg', '--ry': '0deg', '--ty': '0px' }}
+    onMouseMove={(e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rotateX = ((x / rect.width) - 0.5) * 7;
+      const rotateY = ((y / rect.height) - 0.5) * -7;
+      e.currentTarget.style.setProperty('--mx', `${x}px`);
+      e.currentTarget.style.setProperty('--my', `${y}px`);
+      e.currentTarget.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
+      e.currentTarget.style.setProperty('--ry', `${rotateY.toFixed(2)}deg`);
+      e.currentTarget.style.setProperty('--ty', '-6px');
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.setProperty('--rx', '0deg');
+      e.currentTarget.style.setProperty('--ry', '0deg');
+      e.currentTarget.style.setProperty('--ty', '0px');
+    }}
+  >
+    <div className="project-spotlight" />
     <div className="aspect-video overflow-hidden bg-slate-800 relative">
       <img
         src={project.image}
@@ -358,6 +403,12 @@ const ChatInterface = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
+  const QUICK_PROMPTS = [
+    "Tell me about your internship experience",
+    "Show your featured projects with links",
+    "What are your top technical skills?",
+    "How can I contact you?"
+  ];
 
   useEffect(() => { scrollRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isOpen]);
 
@@ -457,9 +508,12 @@ const ChatInterface = () => {
     });
   };
 
-  const send = async () => {
-    if (!input.trim() || loading) return;
-    const msg = input; setInput(''); setLoading(true);
+  const send = async (presetMessage) => {
+    if (loading) return;
+    const msg = (presetMessage ?? input).trim();
+    if (!msg) return;
+    if (!presetMessage) setInput('');
+    setLoading(true);
     setMessages(p => [...p, { role: 'user', text: msg }]);
     try {
       const context = JSON.stringify({ PERSONAL_INFO, SKILLS, PROJECTS, EXPERIENCE, EDUCATION });
@@ -503,31 +557,74 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-4 right-3 left-3 sm:left-auto sm:right-6 sm:bottom-6 z-50 flex flex-col items-end">
       {isOpen && (
-        <div className="mb-4 w-80 md:w-96 bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
-          <div className="bg-slate-950 p-4 text-white flex justify-between items-center border-b border-slate-800">
-            <div className="flex items-center gap-2 font-bold"><Bot size={18} className="text-blue-400" /> AI Assistant</div>
-            <button onClick={() => setIsOpen(false)}><X size={18} /></button>
+        <div className="assistant-shell assistant-safe-panel mb-3 sm:mb-4 w-[min(25rem,calc(100vw-1rem))] rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="assistant-header p-4 text-white flex justify-between items-center">
+            <div>
+              <div className="flex items-center gap-2 font-bold text-base">
+                <Bot size={18} className="text-cyan-300" />
+                AI Assistant
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Ask about projects, skills, and experience</p>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="assistant-icon-btn h-8 w-8 rounded-lg flex items-center justify-center"
+              aria-label="Close assistant"
+            >
+              <X size={16} />
+            </button>
           </div>
-          <div className="h-80 p-4 overflow-y-auto space-y-3 bg-slate-950/50">
+            <div className="assistant-body min-h-0 flex-1 p-4 overflow-y-auto space-y-3">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700 shadow-sm'}`}>
+                <div className={`max-w-[86%] p-3 rounded-2xl text-sm whitespace-pre-wrap ${m.role === 'user' ? 'assistant-user-msg' : 'assistant-ai-msg'}`}>
                   {m.role === 'assistant' ? renderMessage(m.text) : m.text}
                 </div>
               </div>
             ))}
-            {loading && <Loader2 size={16} className="animate-spin text-slate-500" />}
+            {loading && (
+              <div className="flex items-center gap-2 text-slate-400 text-xs">
+                <Loader2 size={14} className="animate-spin" />
+                Thinking...
+              </div>
+            )}
             <div ref={scrollRef} />
           </div>
-          <div className="p-3 bg-slate-950 border-t border-slate-800 flex gap-2">
-            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Type a message..." className="flex-1 bg-slate-900 text-white rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border border-slate-800 placeholder:text-slate-500" />
-            <button onClick={send} disabled={loading} className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-500 disabled:opacity-50"><Send size={16} /></button>
+          <div className="assistant-quick-actions px-3 pb-2 flex flex-wrap gap-2 max-h-20 overflow-y-auto">
+            {QUICK_PROMPTS.map((prompt) => (
+              <button
+                key={prompt}
+                onClick={() => send(prompt)}
+                disabled={loading}
+                className="assistant-chip px-3 py-1.5 rounded-full text-xs font-medium"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+          <div className="assistant-input-wrap p-3 flex gap-2">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && send()}
+              placeholder="Ask about internship, skills, or projects..."
+              className="assistant-input flex-1 rounded-full px-4 py-2.5 text-sm focus:outline-none"
+            />
+            <button
+              onClick={send}
+              disabled={loading}
+              className="assistant-send-btn h-10 w-10 rounded-full flex items-center justify-center disabled:opacity-50"
+              aria-label="Send message"
+            >
+              <Send size={16} />
+            </button>
           </div>
         </div>
       )}
-      <button onClick={() => setIsOpen(!isOpen)} className="h-14 w-14 bg-blue-600 text-white rounded-full shadow-xl hover:scale-105 transition-transform flex items-center justify-center hover:bg-blue-500 shadow-blue-900/20">
+      <button onClick={() => setIsOpen(!isOpen)} className="assistant-fab h-14 w-14 rounded-full shadow-xl hover:scale-105 transition-transform flex items-center justify-center">
         {isOpen ? <X /> : <MessageCircle />}
       </button>
     </div>
@@ -706,11 +803,12 @@ const IdeaGenerator = () => {
 export default function Portfolio() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
-  const [theme, setTheme] = useState(() => localStorage.getItem('portfolio-theme') || 'dark');
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
+      setScrollY(window.scrollY);
       const sections = ['about', 'skills', 'projects', 'experience', 'education', 'contact'];
       for (const id of sections) {
         const el = document.getElementById(id);
@@ -721,21 +819,15 @@ export default function Portfolio() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('portfolio-theme', theme);
-  }, [theme]);
-
-  const isDark = theme === 'dark';
-
   return (
-    <div className={`theme-root ${isDark ? 'theme-dark' : 'theme-light'} min-h-screen font-sans selection:bg-cyan-500 selection:text-slate-950`}>
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500 selection:text-slate-950">
 
       {/* --- DYNAMIC BACKGROUND (UPDATED COLORS) --- */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="animated-grid-bg absolute inset-0 opacity-25" />
-        <div className="mesh-blob mesh-blob--one"></div>
-        <div className="mesh-blob mesh-blob--two"></div>
-        <div className="mesh-blob mesh-blob--three"></div>
+        <div className="animated-grid-bg parallax-grid absolute inset-0 opacity-25" style={{ transform: `translate3d(0, ${scrollY * 0.06}px, 0)` }} />
+        <div className="mesh-blob mesh-blob--one" style={{ transform: `translate3d(0, ${scrollY * 0.12}px, 0)` }}></div>
+        <div className="mesh-blob mesh-blob--two" style={{ transform: `translate3d(0, ${scrollY * -0.08}px, 0)` }}></div>
+        <div className="mesh-blob mesh-blob--three" style={{ transform: `translate3d(0, ${scrollY * 0.05}px, 0)` }}></div>
       </div>
 
       {/* --- FLOATING NAVIGATION --- */}
@@ -749,14 +841,6 @@ export default function Portfolio() {
               active={activeSection === item.toLowerCase()}
             />
           ))}
-          <button
-            onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className="theme-toggle ml-1 mr-1 sm:mr-2 flex-shrink-0 h-9 w-9 rounded-xl border flex items-center justify-center transition-all"
-            aria-label="Toggle theme"
-            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
           <div className="w-px h-3 sm:h-4 bg-slate-700 mx-1 sm:mx-2 flex-shrink-0"></div>
           <a
             href="#contact"
@@ -782,7 +866,7 @@ export default function Portfolio() {
               <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-7">
                 <div>
                   <div className="hero-status inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-200 text-xs font-bold mb-4 border border-cyan-400/40">
-                    <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span></span>
+                    <span className="inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
                     Available for Work
                   </div>
                   <h1 className="hero-heading text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.05]">
@@ -820,8 +904,8 @@ export default function Portfolio() {
               </div>
 
               <div className="order-1 md:order-2 flex-1 flex justify-center relative">
-                <div className="relative w-64 h-64 md:w-80 md:h-80 profile-wrap">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
+                <div className="relative w-64 h-64 md:w-80 md:h-80">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-[2rem] rotate-6 opacity-30 blur-2xl"></div>
                   <img
                     src={PERSONAL_INFO.profileImage}
                     alt="Profile"
@@ -855,7 +939,7 @@ export default function Portfolio() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
             {SKILLS.map((skill, idx) => (
               <Reveal key={idx} delay={idx * 90}>
-                <div className={`premium-card bg-[#0a1124]/75 backdrop-blur-sm p-6 rounded-3xl border border-slate-700 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
+                <div className="bg-[#0a1124]/75 backdrop-blur-sm p-6 rounded-3xl border border-slate-700 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform`}>
                     {skill.icon}
                   </div>
