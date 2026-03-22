@@ -64,3 +64,218 @@
     animation: none;
   }
 }
+
+.theme-root {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+.theme-dark {
+  background: #020617;
+  color: #e2e8f0;
+}
+
+.theme-light {
+  background: radial-gradient(circle at top left, #dbeafe 0%, #f8fafc 45%, #eef2ff 100%);
+  color: #0f172a;
+}
+
+.top-nav {
+  background: rgba(5, 8, 22, 0.62);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.top-nav.is-scrolled {
+  background: rgba(5, 8, 22, 0.88);
+  border-color: rgba(34, 211, 238, 0.45);
+}
+
+.theme-toggle {
+  border-color: rgba(148, 163, 184, 0.45);
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(34, 211, 238, 0.6);
+}
+
+.hero-shell,
+.contact-shell,
+.premium-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-shell::before,
+.contact-shell::before,
+.premium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, rgba(34, 211, 238, 0.35), rgba(99, 102, 241, 0.25), rgba(34, 211, 238, 0.2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.hero-heading {
+  animation: fadeUp 850ms ease both;
+}
+
+.hero-status,
+.profile-badge,
+.hire-btn,
+.hero-cta-primary,
+.hero-cta-secondary {
+  animation: fadeUp 700ms ease both;
+}
+
+.profile-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 2rem;
+  border: 1px dashed rgba(34, 211, 238, 0.38);
+  animation: orbit 14s linear infinite;
+}
+
+.premium-card::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -140%;
+  width: 65%;
+  height: 220%;
+  background: linear-gradient(to right, transparent, rgba(34, 211, 238, 0.2), transparent);
+  transform: rotate(18deg);
+  transition: left 650ms ease;
+  pointer-events: none;
+}
+
+.premium-card:hover::after {
+  left: 180%;
+}
+
+.project-card,
+.experience-card,
+.education-card {
+  will-change: transform;
+}
+
+.project-card:hover,
+.experience-card:hover,
+.education-card:hover {
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.35), 0 0 0 1px rgba(34, 211, 238, 0.25) inset;
+}
+
+.section-chip {
+  animation: pulseSoft 3.6s ease-in-out infinite;
+}
+
+.theme-light .animated-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(30, 64, 175, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 64, 175, 0.09) 1px, transparent 1px);
+}
+
+.theme-light .top-nav {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(14, 116, 144, 0.28);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.12);
+}
+
+.theme-light .top-nav.is-scrolled {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(14, 116, 144, 0.4);
+}
+
+.theme-light .theme-toggle {
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  border-color: rgba(14, 116, 144, 0.25);
+}
+
+.theme-light .hero-shell,
+.theme-light .contact-shell,
+.theme-light .premium-card {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(14, 116, 144, 0.22) !important;
+  box-shadow: 0 18px 44px rgba(30, 64, 175, 0.16);
+}
+
+.theme-light .hero-shell h1,
+.theme-light .hero-shell h2,
+.theme-light .hero-shell h3,
+.theme-light .contact-shell h2,
+.theme-light .premium-card h3,
+.theme-light .premium-card h4,
+.theme-light .premium-card h5 {
+  color: #0f172a !important;
+}
+
+.theme-light .hero-shell p,
+.theme-light .contact-shell p,
+.theme-light .premium-card p,
+.theme-light .premium-card li,
+.theme-light .premium-card span {
+  color: #334155 !important;
+}
+
+.theme-light .profile-badge {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(14, 116, 144, 0.28) !important;
+}
+
+.theme-light .profile-badge p {
+  color: #0f172a !important;
+}
+
+.theme-light .section-chip {
+  background: rgba(14, 116, 144, 0.08) !important;
+  border-color: rgba(14, 116, 144, 0.3) !important;
+  color: #0f766e !important;
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-heading,
+  .hero-status,
+  .profile-badge,
+  .hire-btn,
+  .hero-cta-primary,
+  .hero-cta-secondary,
+  .section-chip {
+    animation: none !important;
+  }
+
+  .premium-card::after,
+  .profile-wrap::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -26,7 +26,9 @@ import {
   Bot,
   Loader2,
   Layers,
-  Command
+  Command,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 // --- GEMINI API CONFIGURATION ---
@@ -179,7 +181,7 @@ async function callGeminiAPI(prompt, systemInstruction, isJson = false) {
 
 const SectionTitle = ({ children, id, subtitle }) => (
   <div className="mb-10 text-center md:text-left">
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-[11px] font-semibold tracking-[0.2em] uppercase text-cyan-200 mb-3">
+    <div className="section-chip inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-[11px] font-semibold tracking-[0.2em] uppercase text-cyan-200 mb-3">
       Portfolio
     </div>
     <h2 id={id} className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-3">
@@ -242,7 +244,7 @@ const NavLink = ({ href, label, onClick, active }) => (
 );
 
 const ProjectCard = ({ project }) => (
-  <div className="group relative rounded-3xl overflow-hidden border border-slate-700/70 bg-slate-900/70 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:-translate-y-1.5 hover:border-cyan-400/60">
+  <div className="project-card premium-card group relative rounded-3xl overflow-hidden border border-slate-700/70 bg-slate-900/70 shadow-xl shadow-slate-950/40 transition-all duration-500 hover:-translate-y-1.5 hover:border-cyan-400/60">
     <div className="aspect-video overflow-hidden bg-slate-800 relative">
       <img
         src={project.image}
@@ -291,7 +293,7 @@ const ProjectCard = ({ project }) => (
 );
 
 const EducationCard = ({ education, isLatest }) => (
-  <div className={`rounded-2xl border p-6 md:p-7 transition-all duration-300 ${isLatest ? 'border-cyan-400/40 bg-cyan-500/10' : 'border-slate-700 bg-slate-900/60'}`}>
+  <div className={`education-card premium-card rounded-2xl border p-6 md:p-7 transition-all duration-300 ${isLatest ? 'border-cyan-400/40 bg-cyan-500/10' : 'border-slate-700 bg-slate-900/60'}`}>
     <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
       <h4 className="text-lg font-bold text-white">{education.degree}</h4>
       <span className="text-xs px-3 py-1 rounded-full border border-slate-600 text-slate-300">{education.period}</span>
@@ -303,7 +305,7 @@ const EducationCard = ({ education, isLatest }) => (
 
 const ExperienceCard = ({ item, index }) => (
   <Reveal delay={index * 120}>
-    <div className="group relative overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/70 backdrop-blur-sm p-7 md:p-8 shadow-xl shadow-slate-950/40 hover:border-cyan-400/50 transition-all duration-500 hover:-translate-y-1">
+    <div className="experience-card premium-card group relative overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/70 backdrop-blur-sm p-7 md:p-8 shadow-xl shadow-slate-950/40 hover:border-cyan-400/50 transition-all duration-500 hover:-translate-y-1">
       <div className="absolute -top-20 -right-16 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
       <div className="relative z-10">
         <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
@@ -704,6 +706,7 @@ const IdeaGenerator = () => {
 export default function Portfolio() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
+  const [theme, setTheme] = useState(() => localStorage.getItem('portfolio-theme') || 'dark');
 
   useEffect(() => {
     const onScroll = () => {
@@ -718,8 +721,14 @@ export default function Portfolio() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem('portfolio-theme', theme);
+  }, [theme]);
+
+  const isDark = theme === 'dark';
+
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 selection:bg-cyan-500 selection:text-slate-950">
+    <div className={`theme-root ${isDark ? 'theme-dark' : 'theme-light'} min-h-screen font-sans selection:bg-cyan-500 selection:text-slate-950`}>
 
       {/* --- DYNAMIC BACKGROUND (UPDATED COLORS) --- */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -731,7 +740,7 @@ export default function Portfolio() {
 
       {/* --- FLOATING NAVIGATION --- */}
       <div className="fixed top-3 sm:top-6 left-0 w-full z-50 flex justify-center px-2 sm:px-4">
-        <nav className={`flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-2xl transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'bg-[#050816]/85 backdrop-blur-xl shadow-2xl shadow-black/50 border-cyan-500/30 scale-100' : 'bg-[#050816]/60 backdrop-blur-md border-slate-700/70 scale-100'}`}>
+        <nav className={`top-nav flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-2xl transition-all duration-500 border max-w-full overflow-x-auto hide-scrollbar ${scrolled ? 'is-scrolled' : ''}`}>
           {['About', 'Skills', 'Projects', 'Experience', 'Education'].map((item) => (
             <NavLink
               key={item}
@@ -740,6 +749,14 @@ export default function Portfolio() {
               active={activeSection === item.toLowerCase()}
             />
           ))}
+          <button
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            className="theme-toggle ml-1 mr-1 sm:mr-2 flex-shrink-0 h-9 w-9 rounded-xl border flex items-center justify-center transition-all"
+            aria-label="Toggle theme"
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
           <div className="w-px h-3 sm:h-4 bg-slate-700 mx-1 sm:mx-2 flex-shrink-0"></div>
           <a
             href="#contact"
@@ -747,7 +764,7 @@ export default function Portfolio() {
               e.preventDefault();
               document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 whitespace-nowrap flex-shrink-0"
+            className="hire-btn px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 whitespace-nowrap flex-shrink-0"
           >
             Hire Me
           </a>
@@ -759,16 +776,16 @@ export default function Portfolio() {
       {/* --- HERO SECTION --- */}
       <header id="about" className="pt-32 pb-14 px-6 relative scroll-mt-40">
         <div className="container mx-auto max-w-6xl">
-          <div className="rounded-[2rem] border border-cyan-500/20 bg-[#050816]/75 backdrop-blur-xl px-6 py-10 md:px-12 md:py-14 shadow-2xl shadow-black/50">
+          <div className="hero-shell rounded-[2rem] border border-cyan-500/20 bg-[#050816]/75 backdrop-blur-xl px-6 py-10 md:px-12 md:py-14 shadow-2xl shadow-black/50">
             <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
 
               <div className="order-2 md:order-1 flex-1 text-center md:text-left space-y-7">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-200 text-xs font-bold mb-4 border border-cyan-400/40">
+                  <div className="hero-status inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-200 text-xs font-bold mb-4 border border-cyan-400/40">
                     <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span></span>
                     Available for Work
                   </div>
-                  <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.05]">
+                  <h1 className="hero-heading text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.05]">
                     {PERSONAL_INFO.name}
                     <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-violet-300 mt-2 text-2xl md:text-4xl">
                       {PERSONAL_INFO.role}
@@ -787,7 +804,7 @@ export default function Portfolio() {
                     href={PERSONAL_INFO.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-7 py-3.5 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
+                    className="hero-cta-primary px-7 py-3.5 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:shadow-cyan-300/20 hover:-translate-y-0.5"
                   >
                     <Github size={20} /> GitHub
                   </a>
@@ -795,7 +812,7 @@ export default function Portfolio() {
                     href={PERSONAL_INFO.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-7 py-3.5 bg-[#0077b5] text-white border border-transparent rounded-xl font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
+                    className="hero-cta-secondary px-7 py-3.5 bg-[#0077b5] text-white border border-transparent rounded-xl font-bold hover:bg-[#006097] transition-all flex items-center gap-2 hover:-translate-y-0.5"
                   >
                     <Linkedin size={20} /> LinkedIn
                   </a>
@@ -803,7 +820,7 @@ export default function Portfolio() {
               </div>
 
               <div className="order-1 md:order-2 flex-1 flex justify-center relative">
-                <div className="relative w-64 h-64 md:w-80 md:h-80">
+                <div className="relative w-64 h-64 md:w-80 md:h-80 profile-wrap">
                   <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-[2rem] rotate-6 opacity-30 blur-2xl animate-pulse"></div>
                   <img
                     src={PERSONAL_INFO.profileImage}
@@ -812,7 +829,7 @@ export default function Portfolio() {
                     onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${PERSONAL_INFO.name}`; }}
                   />
 
-                  <div className="absolute -bottom-6 -left-6 bg-[#050816]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-cyan-500/30 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
+                  <div className="profile-badge absolute -bottom-6 -left-6 bg-[#050816]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-cyan-500/30 flex items-center gap-3 transform transition-all hover:scale-105 hover:shadow-cyan-500/20">
                     <div className="bg-cyan-900/50 p-2 rounded-full text-cyan-300"><Code size={20} /></div>
                     <div>
                       <p className="text-xs text-slate-400 font-bold uppercase">Role</p>
@@ -838,7 +855,7 @@ export default function Portfolio() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
             {SKILLS.map((skill, idx) => (
               <Reveal key={idx} delay={idx * 90}>
-                <div className={`bg-[#0a1124]/75 backdrop-blur-sm p-6 rounded-3xl border border-slate-700 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
+                <div className={`premium-card bg-[#0a1124]/75 backdrop-blur-sm p-6 rounded-3xl border border-slate-700 shadow-sm hover:shadow-xl hover:shadow-cyan-900/10 transition-all hover:-translate-y-1.5 group hover:border-cyan-500/40`}>
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform`}>
                     {skill.icon}
                   </div>
@@ -901,7 +918,7 @@ export default function Portfolio() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="bg-[#050816]/80 backdrop-blur-md rounded-[2rem] p-10 md:p-16 text-center relative overflow-hidden scroll-mt-40 border border-cyan-500/20">
+        <section id="contact" className="contact-shell bg-[#050816]/80 backdrop-blur-md rounded-[2rem] p-10 md:p-16 text-center relative overflow-hidden scroll-mt-40 border border-cyan-500/20">
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Ready to collaborate?</h2>
             <p className="text-slate-400 text-lg mb-10">
